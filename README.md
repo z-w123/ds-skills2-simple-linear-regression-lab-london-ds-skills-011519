@@ -5,7 +5,6 @@
 
 Regression analysis forms the basis of machine learning experiments. Understanding regression will help you to get the foundations of most machine learing algorithms. Ever wondered what's at the heart of an artificial neural network processing unstructured data like music and graphics? It can be linear regression!
 
-
 ## Objectives
 
 You will be able to:
@@ -17,7 +16,7 @@ You will be able to:
 
 
 
-## Let's get started 
+## Let's get started
 
 A first step towards understanding regression is getting a clear idea about "linear" regression and basic linear algebra. 
 
@@ -46,7 +45,8 @@ Y = np.array([7,7,8,9,9,10,10,11,11,12], dtype=np.float64)
 
 ```python
 # Scatter plot
-
+plt.scatter(X,Y)
+plt.show()
 ```
 
 
@@ -57,9 +57,8 @@ Y = np.array([7,7,8,9,9,10,10,11,11,12], dtype=np.float64)
 ```python
 # Your observations about relationship in X and Y 
 
-
-
-#
+# The relationship is very linear but not perfectly linear
+# THe best fit line should be able to explain this relationship with very low error
 ```
 
 In a data analysis context, we can think of these points as two vectors:
@@ -67,9 +66,9 @@ In a data analysis context, we can think of these points as two vectors:
 * **vector X**: the features of our model
 * **vector Y**: the labels for given features
 
-## Write a function calc_slope()
+## Write a function calc_slope() 
 
-Write a function `calc_clope()` that takes in x and y vectors and calculates the slope using the formula shown above. 
+Write a function `calc_slope()` that takes in x and y vectors and calculates the slope using the formula shown above. 
 
 
 ```python
@@ -77,12 +76,23 @@ Write a function `calc_clope()` that takes in x and y vectors and calculates the
 # (mean(x) * mean(y) – mean(x*y)) / ( mean (x)^2 – mean( x^2))
 def calc_slope(xs,ys):
     
-    pass
+    # Use the slope formula above and calculate the slope
+    m = (((np.mean(xs)*np.mean(ys)) - np.mean(xs*ys)) /
+         ((np.mean(xs)**2) - np.mean(xs*xs)))
+    
+    return m
 
 calc_slope(X,Y)
 
 # 0.5393518518518512
 ```
+
+
+
+
+    0.5393518518518512
+
+
 
 Great, so we have our slope. Next we calculate the intercept. 
 
@@ -96,43 +106,51 @@ Write a function `best_fit()` that takes in X and Y, calculates the slope using 
 
 
 ```python
-# use the slope function with intercept formula to return calculate slop and intercept from data points
-
 def best_fit(xs,ys):
     
-    pass
+    # use the slope function with intercept formula to return calculate slop and intercept from data points
+    m = calc_slope(xs,ys)
+    b = np.mean(ys) - m*np.mean(xs)
+    
+    return m, b
 
-# Uncomment below to test your function
-
-#m, b = best_fit(X,Y)
-# m,b
-
+m, b = best_fit(X,Y)
+m,b
 # (0.5393518518518512, 6.379629629629633)
 ```
+
+
+
+
+    (0.5393518518518512, 6.379629629629633)
+
+
 
 We now have a working model with `m` and `b` as model parameters. We can create a line for the data points using the calculated slope and intercept:
 
 * Recall that `y=mx+b`. We can now use slope and intercept values along with X data points (features) to calculate the Y data points (labels) of the regression line. 
 
-## Write a function reg_line() 
+## Write a function reg_line()
 
-Write a function `reg_line()` that takes in slope, intercept and X vector and calculates the regression line using Y= mX+b for each point in X.
+Write a function `reg_line()` that takes in slope, intercept and X vector and calculates the regression line using Y= mX+b for each point in X
 
 
 ```python
 def reg_line (m, b, xs):
     
-    pass
+    return [(m*x)+b for x in xs]
 
-# Uncomment below
-#regression_line = reg_line(m,b,X)
+regression_line = reg_line(m,b,X)
 ```
 
 ## Plot the (x,y) data points and draw the calculated regression line for visual inspection
 
 
 ```python
-# Plot data and regression line
+plt.scatter(X,Y,color='#003F72', label="Data points")
+plt.plot(X, regression_line, label= "Regression Line")
+plt.legend()
+plt.show()
 ```
 
 
@@ -145,10 +163,11 @@ So there we have it, our least squares regression line. This is the best fit lin
 
 
 ```python
-# Your answer here
+# y = 6.37 + 0.53x
 
-
-
+# The line crosses y-axis at 6.37 (shown in the graph) - intercept
+# The slope of line is 0.53 - a slope 0 would a horizontal line , and slope = 1 would be a vertical one
+# Our slope creates an angle roughly around 45 degree between x and y . 
 ```
 
 ## Predicting label for new data
@@ -163,22 +182,31 @@ Let's try to find a y prediction for a new value of x = 7 and unknown y, and plo
 
 ```python
 x_new = 7
-y_predicted = None
+y_predicted = (m*x_new)+b
 y_predicted
 
 # 10.155092592592592
 ```
 
-## Plot the prediction with actual data and regression line 
+
+
+
+    10.155092592592592
+
+
 
 
 ```python
-# Plot as above and show the predicted value
 
+plt.scatter(X,Y,color='#000F72',label='data')
+plt.plot(X, regression_line, color='#880000', label='regression line')
+plt.scatter(x_new,y_predicted,color='r',label='Prediction: '+ str(np.round(y_predicted,1)))
+plt.legend(loc=4)
+plt.show()
 ```
 
 
-![png](index_files/index_22_0.png)
+![png](index_files/index_21_0.png)
 
 
 We now know how to create our own models, which is great, but we're stilling missing something integral: how accurate is our model? This is the topic for discussion in the next lab.
